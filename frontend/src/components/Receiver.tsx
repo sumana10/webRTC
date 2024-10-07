@@ -25,16 +25,23 @@ export const Receiver = () =>{
                     }));
                 }
             }
-            pc.ontrack = (event) =>{
+          
+            pc.ontrack = (event) => {
                 const video = document.createElement('video');
                 document.body.appendChild(video);
-        
-                // console.log(event)
-                // if(videoRef.current){
-                    video.srcObject = new MediaStream([event.track])
-                // }
-                video.play()
-            }
+              
+                video.srcObject = new MediaStream([event.track]);
+                video.setAttribute("playsinline", "true"); 
+                video.controls = true; 
+                video.play().catch((error) => {
+                  if (error.name === "NotAllowedError") {
+                    console.log("Playback was blocked due to autoplay restrictions. Waiting for user interaction...");
+                  } else {
+                    console.error("Error playing video:", error);
+                  }
+                });
+              };
+              
             const answer = await pc.createAnswer();
             await pc.setLocalDescription(answer);
 
